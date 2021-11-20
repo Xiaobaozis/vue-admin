@@ -12,7 +12,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button @click="">搜索</el-button>
+        <el-button @click="getRoleList">搜索</el-button>
       </el-form-item>
 
 
@@ -201,8 +201,18 @@ export default {
       },
      
       getRoleList(){
-        this.$axios.get('/sys/role/list').then(res=>{
-          this.tableData=res.data.data
+        this.$axios.get('/sys/role/list',{
+          params:{
+            name:this.searchForm.name,
+            current:this.current,
+            size:this.size
+          }
+        }).then(res=>{
+          this.tableData=res.data.data.records
+          this.size=res.data.data.size
+          this.current=res.data.data.current
+          this.total=res.data.data.total
+        
         })
       },
       submitForm(formName){

@@ -180,24 +180,41 @@ Mock.mock(RegExp('/sys/menu/*'), 'post', () => {
     return Result
 })
 
-Mock.mock('/sys/role/list', 'get', () => {
+Mock.mock(RegExp('/sys/role/list*'), 'get', () => {
 
-    let records = [{
-            id: 1,
-            name: '普通用户',
-            code: 'nonmal',
-            remark: '只有基本查看功能',
-            status: 1
-        },
-        {
-            id: 2,
-            name: '超级管理员',
-            code: 'admin',
-            remark: '系统默认最高权限，不可编辑和任意修改',
-            status: 1
-        }
-    ]
-    Result.data = records
+    Result.data = {
+        records: [{
+                id: 3,
+                created: "2021-01-16T13:29:03",
+                updated: "2021-01-16T13:29:03",
+                status: 1,
+                name: "普通用户",
+                code: "ormal",
+                remark: "只有基本查看功能",
+                menuIds: []
+            },
+            {
+                id: 6,
+                created: "2021-01-16T13:29:03",
+                updated: "2021-01-16T13:29:03",
+                status: 1,
+                name: "超级管理员",
+                code: "admin",
+                remark: "系统默认最高权限，不可编辑和任意修改",
+                menuIds: []
+            }
+        ],
+        total: 2,
+        size: 10,
+        current: 1,
+        orders: [],
+        optimizeCountSql: true,
+        hitCount: false,
+        countId: null,
+        maxLimit: null,
+        searchCount: true,
+        pages: 1
+    }
     return Result
 })
 
