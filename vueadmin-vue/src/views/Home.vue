@@ -5,7 +5,7 @@
     </el-aside>
     <el-container>  
       <el-header>
-        <strong>VueAdmin后台管理系统</strong>
+        <strong>VueAdmin后台管理系统（姜奋斗）</strong>
 
         <div class="header-avatar">
 
