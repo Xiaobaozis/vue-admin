@@ -224,8 +224,8 @@ Mock.mock(RegExp('/sys/role/info/*'), 'get', () => {
         name: '普通用户',
         code: 'nonmal',
         remark: '只有基本查看功能',
-        status: 1
-
+        status: 1,
+        menuIds: [3]
     }
 
     return Result

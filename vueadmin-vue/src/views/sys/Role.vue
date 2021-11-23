@@ -70,14 +70,14 @@
       prop="icon"
       label="操作">
        <template slot-scope="scope">
-          <el-button type="text" @click="editHandle(scope.row.id)" >分配权限</el-button>
+          <el-button type="text" @click="permHandle(scope.row.id)" >分配权限</el-button>
           <el-divider direction="vertical"></el-divider>
 
            <el-button type="text" @click="editHandle(scope.row.id)" >编辑</el-button>
           <el-divider direction="vertical"></el-divider>
 
           <template>
-            <el-popconfirm title="这是一段内容确定删除吗?" @confirm="delHandle(scope.row.id)">
+            <el-popconfirm title="这是一段内容确定删除吗?" @confirm="delHandle(null)">
               <el-button type="text" slot="reference" >删除</el-button>
             </el-popconfirm>
           </template>
@@ -132,11 +132,37 @@
     
     
  
-    <el-form-item>
-      <el-button type="primary" @click="submitForm('editForm')">立即创建</el-button>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('editForm')">立即创建</el-button>
         <el-button @click="resetForm('editForm')">重置</el-button>
       </el-form-item>
     </el-form>
+  </el-dialog>
+
+
+  <el-dialog
+     title="分配权限" 
+    :visible.sync="permDialogVisible" 
+    width="600px"> 
+   
+    <el-form :model="permForm">
+
+      <el-tree
+        :data="permTreeData"
+        ref="permTree"
+        show-checkbox
+        :default-expand-all=true
+        node-key="id"
+        :check-strictly=true
+        :props="defaultProps">
+      </el-tree>   
+    </el-form>
+    
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="permDialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="submitPermFormHandle('permForm')">确 定</el-button>
+    </span>
+
   </el-dialog>
 
 
@@ -159,21 +185,39 @@ export default {
       editForm: {},
 
       tableData: [],
-
+      
       editFormRules:{
             
-             name:[
-              {required:true,message:'请输入角色名称',trigger:'blur'}
-            ],
-             code:[
-              {required:true,message:'请输入唯一编码',trigger:'blur'}
-            ],            
-            status:[
-              {required:true,message:'请选择状态',trigger:'blur'}
-            ]
-          },
+        name:[
+          {required:true,message:'请输入角色名称',trigger:'blur'}
+        ],
+        code:[
+          {required:true,message:'请输入唯一编码',trigger:'blur'}
+        ],            
+        status:[
+          {required:true,message:'请选择状态',trigger:'blur'}
+        ]
+      },
+        multipleSelection:[],
+        permDialogVisible:false,
+        permForm:{},
+        defaultProps: {
+          children: 'children',
+          label: 'name'
+        },
+        permTreeData:[]
     }
+  
   },
+
+  created(){
+      this.getRoleList() 
+
+      this.$axios.get('/sys/menu/list').then(res=>{
+        
+        this.permTreeData=res.data.data
+      })
+    },
  methods: {
       toggleSelection(rows) {
         if (rows) {
@@ -186,13 +230,22 @@ export default {
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
+
+        this.delBtlStatu = val.length == 0
       },
+
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.size=val
+        this.getRoleList()
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.current=val
+        this.getRoleList()
+
       },
+
       resetForm(formName) {
         this.$refs[formName].resetFields();
         this.editForm={}
@@ -238,16 +291,27 @@ export default {
       });
     },
    
-    editHandle(id){
+      editHandle(id){
       this.$axios.get('/sys/role/info/'+id).then(res=>{
         this.editForm=res.data.data
 
 
         this.dialogVisible=true
       })
-    },
-    delHandle(id){
-        this.$axios.post('/sys/role/delete/'+ id).then(res=>{
+      },
+      delHandle(id){
+        var ids=[]
+        ids.push(id)
+
+        if(id){
+          ids.push(id)
+        }else{
+          this.multipleSelection.forEach(row=>{
+            ids.push(row.id)
+          })
+        }
+
+        this.$axios.post('/sys/role/delete/',ids).then(res=>{
             this.$message({
               showClose: true,
               message: '恭喜你，操作成功',
@@ -257,17 +321,47 @@ export default {
               }
             });
         })
-    },
-    handleClose(){
-      this.resetForm("editForm")
+      },
+      handleClose(){
+        this.resetForm("editForm")
+      },
+
+      permHandle(id){
+        this.permDialogVisible=true
+
+        this.$axios.get('/sys/role/info/'+id).then(res=>{
+          console.log("role tree");
+          console.log(res.data.data);
+          this.$refs.permTree.setCheckedKeys(res.data.data.menuIds);
+          this.permForm=res.data.data
+
+        })
+      },
+      submitPermFormHandle(formName){
+        var menuIds=this.$refs.permTree.getCheckedKeys()
+        console.log(menuIds);
+
+        this.$axios.post('/sys/role/perm'+this.permForm.id,menuIds).then(res=>{
+          
+          this.$message({
+            showClose: true,
+            message: '恭喜你，操作成功',
+            type: 'success',
+            onClose:()=>{
+             this.getRoleList()
+            }
+          });
+          this.permDialogVisible=false
+
+        })
+      }
+   
+
     },
 
-  },
-  created(){
-    this.getRoleList()
     
+  
   }
-}
 </script>
 
 <style scoped>
