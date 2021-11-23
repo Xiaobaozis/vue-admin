@@ -236,3 +236,81 @@ Mock.mock(RegExp('/sys/role/*'), 'post', () => {
 
     return Result
 })
+
+
+
+// user list
+Mock.mock(RegExp('/sys/user/list*'), 'get', () => {
+    Result.data = {
+        records: [{
+                id: 1,
+                avatar: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+                userName: "小包子",
+                roles: [{
+                        roleName: "超级管理员"
+                    },
+                    {
+                        roleName: "无敌超级管理员"
+                    }
+                ],
+                email: "1624831819@qq.com",
+                phone: "13029476691",
+                status: 1,
+                creationTime: "2021-11-23T16:43",
+            },
+            {
+                id: 2,
+                avatar: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+                userName: "小包子",
+                roles: [{
+                        roleName: "超级管理员"
+                    },
+                    {
+                        roleName: "无敌超级管理员"
+                    }
+                ],
+                email: "1624831819@qq.com",
+                phone: "13029476691",
+                status: 1,
+                creationTime: "2021-11-23T16:43",
+            }
+        ],
+        total: 2,
+        size: 10,
+        current: 1,
+        orders: [],
+        optimizeCountSql: true,
+        hitCount: false,
+        countId: null,
+        maxLimit: null,
+        searchCount: true,
+        pages: 1
+    }
+    return Result
+})
+
+Mock.mock(RegExp('/sys/user/'), 'post', () => {
+
+    return Result
+})
+
+Mock.mock(RegExp('/sys/user/info/*'), 'get', () => {
+    Result.data = {
+        id: 1,
+        avatar: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+        userName: "小包子",
+        roles: [{
+                roleName: "超级管理员"
+            },
+            {
+                roleName: "无敌超级管理员"
+            }
+        ],
+        roleIds: [3, 6],
+        email: "1624831819@qq.com",
+        phone: "13029476691",
+        status: 1,
+        creationTime: "2021-11-23T16:43",
+    }
+    return Result
+})
